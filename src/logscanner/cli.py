@@ -1,3 +1,8 @@
+"""
+Command-line interface for the log scanner application. This module handles argument parsing, input validation, and output formatting. It serves as the entry point for the application when executed from the command line.
+
+"""
+
 import argparse
 import json
 from pathlib import Path
@@ -20,27 +25,35 @@ OUTPUT_LABELS = {
 
 
 def main() -> None:
+    """Parse command-line arguments, validate inputs, and write results to 
+        output file."""
     parser = argparse.ArgumentParser(description="Analyze Squid Proxy access logs")
 
     # Core I/O arguments
-    parser.add_argument("--input", '-i', nargs='+', type=Path, required=True, help="Path(s) to the log file(s) to be analyzed")
-    parser.add_argument("--output", '-o', type=Path, required=True, help="Path to the output file where results will be saved")
+    parser.add_argument("--input", '-i', nargs='+', type=Path, required=True, 
+                        help="Path(s) to the log file(s) to be analyzed")
+    parser.add_argument("--output", '-o', type=Path, required=True, 
+                        help="Path to the output file where results will be saved")
 
     # Register calculation options
     for flag, help_text in CALCULATION_OPTIONS.items():
-        parser.add_argument(f"--{flag}", action="store_true", required=False, help=help_text)
+        parser.add_argument(f"--{flag}", action="store_true", required=False, 
+                            help=help_text)
 
     args = parser.parse_args()
-    
-    # Input file validation
+
+    # Input file validation. Do not fail if one file is missing
+    valid_files = []
     for file in args.input:
-        if not file.is_file():
-            parser.error(f"Input file '{file}' not found.")
+        if file.is_file():
+            valid_files.append(file)
+        else:
+            parser.error(f"Input file '{file}' not found. Skipping this file.")
     
-    # Calculation options validation
+    # Calculation flags validation
     if not any(getattr(args, flag) for flag in CALCULATION_OPTIONS):
         parser.error("At least one calculation option must be specified.")
-    
+
     # Flag extraction
     args_dict = vars(args)
     active_flags = [flag for flag in CALCULATION_OPTIONS if args_dict[flag]]
