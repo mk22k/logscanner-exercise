@@ -50,9 +50,10 @@ def main() -> None:
         else:
             parser.error(f"Input file '{file}' not found. Skipping this file.")
     
-    # Calculation flags validation
+    # If no option is selected, show all options
     if not any(getattr(args, flag) for flag in CALCULATION_OPTIONS):
-        parser.error("At least one calculation option must be specified.")
+        for flag in CALCULATION_OPTIONS:
+            setattr(args, flag, True)
 
     # Flag extraction
     args_dict = vars(args)
