@@ -27,8 +27,11 @@ dev = [
 line-length = 79
 target-version = "py311"
 
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
 [tool.ruff.lint]
-select = ["E", "F", "I", "S"]
+select = ["E", "F", "I", "S", "D"]
 ignore = []
 
 [tool.bandit]
