@@ -1,5 +1,9 @@
 """
-Command-line interface for the log scanner application. This module handles argument parsing, input validation, and output formatting. It serves as the entry point for the application when executed from the command line.
+Command-line interface for the log scanner application.
+
+This module handles argument parsing, input validation, and output formatting.
+It serves as the entry point for the application when executed from the 
+command line.
 
 """
 
@@ -25,15 +29,15 @@ OUTPUT_LABELS = {
 
 
 def main() -> None:
-    """Parse command-line arguments, validate inputs, and write results to 
-        output file."""
-    parser = argparse.ArgumentParser(description="Analyze Squid Proxy access logs")
+    """Parse command-line arguments, validate inputs, and write results."""
+    parser = argparse.ArgumentParser(
+        description="Analyze Squid Proxy access logs")
 
     # Core I/O arguments
     parser.add_argument("--input", '-i', nargs='+', type=Path, required=True, 
                         help="Path(s) to the log file(s) to be analyzed")
     parser.add_argument("--output", '-o', type=Path, required=True, 
-                        help="Path to the output file where results will be saved")
+                        help="Path to the file where results will be saved")
 
     # Register calculation options
     for flag, help_text in CALCULATION_OPTIONS.items():
@@ -65,8 +69,8 @@ def main() -> None:
 
     # Dummy data for now (to be replaced by the analyzer)
     placeholder_values = {
-        "mfip": "8.8.8.8",
-        "lfip": "0.0.0.0",
+        "mfip": "10.105.21.199",
+        "lfip": "10.105.21.199",
         "eps": 42,
         "bytes": 123456789
     }
