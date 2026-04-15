@@ -88,20 +88,11 @@ def main() -> None:
     log_stream = parse_logs(valid_paths)
     metrics = analyze_logs(log_stream)
 
-    # Dummy data for now (to be replaced by the analyzer)
-    """placeholder_values = {
-        "mfip": "10.105.21.199",
-        "lfip": "10.105.21.199",
-        "eps": 42,
-        "bytes": 123456789
-    }"""
-    
     # Build the final dictionary using the descriptive keys
     final_output = {
         OUTPUT_LABELS[flag]: metrics[flag] 
         for flag in active_flags
     }
-
 
     try:
         with open(args.output, 'w', encoding='utf-8') as output_file:
