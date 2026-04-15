@@ -11,6 +11,9 @@ import argparse
 import json
 from pathlib import Path
 
+from logscanner.analyzer import analyze_logs
+from logscanner.parser import parse_logs
+
 # Define calculation options
 CALCULATION_OPTIONS = {
     "mfip": "Calculate most frequent IP",
@@ -34,23 +37,38 @@ def main() -> None:
         description="Analyze Squid Proxy access logs")
 
     # Core I/O arguments
-    parser.add_argument("--input", '-i', nargs='+', type=Path, required=True, 
-                        help="Path(s) to the log file(s) to be analyzed")
-    parser.add_argument("--output", '-o', type=Path, required=True, 
-                        help="Path to the file where results will be saved")
+    parser.add_argument(
+        "--input",
+        '-i',
+        nargs='+',
+        type=Path,
+        required=True,
+        help="Path(s) to the log file(s) to be analyzed"
+    )
+    parser.add_argument(
+        "--output",
+        '-o',
+        type=Path,
+        required=True,
+        help="Path to the file where results will be saved"
+    )
 
     # Register calculation options
     for flag, help_text in CALCULATION_OPTIONS.items():
-        parser.add_argument(f"--{flag}", action="store_true", required=False, 
-                            help=help_text)
+        parser.add_argument(
+            f"--{flag}",
+            action="store_true",
+            required=False,
+            help=help_text
+        )
 
     args = parser.parse_args()
 
     # Input file validation. Do not fail if one file is missing
-    valid_files = []
+    valid_paths = []
     for file in args.input:
         if file.is_file():
-            valid_files.append(file)
+            valid_paths.append(file)
         else:
             parser.error(f"Input file '{file}' not found. Skipping this file.")
     
@@ -67,19 +85,23 @@ def main() -> None:
     print(f"Output file: {args.output}")
     print(f"Active calculation options: {active_flags}")
 
+    log_stream = parse_logs(valid_paths)
+    metrics = analyze_logs(log_stream)
+
     # Dummy data for now (to be replaced by the analyzer)
-    placeholder_values = {
+    """placeholder_values = {
         "mfip": "10.105.21.199",
         "lfip": "10.105.21.199",
         "eps": 42,
         "bytes": 123456789
-    }
+    }"""
     
     # Build the final dictionary using the descriptive keys
     final_output = {
-        OUTPUT_LABELS[flag]: placeholder_values[flag] 
+        OUTPUT_LABELS[flag]: metrics[flag] 
         for flag in active_flags
     }
+
 
     try:
         with open(args.output, 'w', encoding='utf-8') as output_file:

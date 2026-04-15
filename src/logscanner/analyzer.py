@@ -37,7 +37,7 @@ def analyze_logs(
     lfip = ip_counter.most_common()[-1][0] if ip_counter else None
     if total_events > 0 and max_timestamp > min_timestamp:
         eps = total_events / (max_timestamp - min_timestamp)
-    
+
     return {
         "mfip": mfip,
         "lfip": lfip,
