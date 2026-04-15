@@ -30,6 +30,10 @@ target-version = "py311"
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
 
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["D104"]
+
+
 [tool.ruff.lint]
 select = ["E", "F", "I", "S", "D"]
 ignore = []
