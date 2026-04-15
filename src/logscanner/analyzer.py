@@ -13,12 +13,16 @@ from typing import Iterator
 
 from logscanner.parser import LogEntry
 
-def analyze_logs(entries: Iterator[LogEntry]) -> dict[str, str | int | float | None]:
-    """Analyze a stream of LogEntry objects to compute required statistics."""
 
+def analyze_logs(
+        entries: Iterator[LogEntry]
+    ) -> dict[str, str | int | float | None]:
+    """Analyze a stream of LogEntry objects to compute required statistics."""
     ip_counter = Counter()
     total_bytes = 0
     total_events = 0
+    min_timestamp = float('inf')
+    max_timestamp = float('-inf')
 
     for entry in entries:
         ip_counter[entry.client_ip] += 1
