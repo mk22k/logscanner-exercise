@@ -19,10 +19,11 @@ def analyze_logs(
     ) -> dict[str, str | int | float | None]:
     """Analyze a stream of LogEntry objects to compute required statistics."""
     ip_counter = Counter()
-    total_bytes = 0
-    total_events = 0
     min_timestamp = float('inf')
     max_timestamp = float('-inf')
+    total_bytes = 0
+    total_events = 0
+    eps = 0.0
 
     for entry in entries:
         ip_counter[entry.client_ip] += 1
@@ -35,6 +36,7 @@ def analyze_logs(
 
     mfip = ip_counter.most_common()[0][0] if ip_counter else None
     lfip = ip_counter.most_common()[-1][0] if ip_counter else None
+    
     if total_events > 0 and max_timestamp > min_timestamp:
         eps = total_events / (max_timestamp - min_timestamp)
 
