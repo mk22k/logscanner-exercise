@@ -1,7 +1,3 @@
-"""Test suite for the log parser module."""
-
-# ruff: noqa: S101
-
 from pathlib import Path
 
 import pytest
