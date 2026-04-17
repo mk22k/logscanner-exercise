@@ -83,3 +83,19 @@ def test_analyze_logs_out_of_order_timestamps():
     assert results["eps"] == 4 / 90.0
     assert results["bytes"] == 4000 + 5006 * 4  # Response + headers
     assert results["mfip"] == "1.1.1.1"
+    assert results["lfip"] in {"1.1.1.2", "1.1.1.3"}
+
+def test_analyze_logs_same_timestamp():
+    """Test that EPS is total events if all timestamps are the same."""
+    stream = iter([
+        _mock_entry(1157689312.113, "1.1.1.1", 1000),
+        _mock_entry(1157689312.113, "1.1.1.1", 1000),
+        _mock_entry(1157689312.113, "1.1.1.3", 1000),
+    ])
+    
+    results = analyze_logs(stream)
+
+    assert results["bytes"] == 3000 + 5006 * 3  # Response + headers
+    assert results["mfip"] == "1.1.1.1"
+    assert results["lfip"] == "1.1.1.3"
+    assert results["eps"] == 3.0
