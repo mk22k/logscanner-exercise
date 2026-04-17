@@ -39,6 +39,8 @@ def analyze_logs(
     
     if total_events > 0 and max_timestamp > min_timestamp:
         eps = total_events / (max_timestamp - min_timestamp)
+    elif total_events > 0:
+        eps = total_events  # All events have the same timestamp
 
     return {
         "mfip": mfip,
