@@ -96,24 +96,29 @@ def main() -> None:
     logging.info(f"Output file: {output_file}")
     logging.info(f"Active calculation options: {active_flags}")
 
-    log_stream = parse_logs(valid_paths)
-    metrics = analyze_logs(log_stream)
-
-    # Build the final dictionary using the descriptive keys
-    final_output = {
-        OUTPUT_LABELS[flag]: metrics[flag] 
-        for flag in active_flags
-    }
-
     try:
-        with open(output_file, 'w', encoding='utf-8') as output_file_handle:
-            json.dump(final_output, output_file_handle, indent=4)
-        logging.info(f"Results successfully written to {output_file}")
+        log_stream = parse_logs(valid_paths)
+        metrics = analyze_logs(log_stream)
 
+        # Build the final dictionary using the descriptive keys
+        final_output = {
+            OUTPUT_LABELS[flag]: metrics[flag] 
+            for flag in active_flags
+        }
+
+        try:
+            with open(output_file, 'w', encoding='utf-8') as output_file_handle:
+                json.dump(final_output, output_file_handle, indent=4)
+            logging.info(f"Results successfully written to {output_file}")
+
+        except Exception as e:
+            logging.error(f"Error writing the output file: {e}")
+            logging.info("Dumping results to console as a fallback:")
+            print(json.dumps(final_output, indent=4))
+            
     except Exception as e:
-        logging.error(f"Error writing the output file: {e}")
-        logging.info("Dumping results to console as a fallback:")
-        print(json.dumps(final_output, indent=4))
+        logging.critical(f"An unexpected critical error occurred during processing: {e}")
+        logging.info("Exiting application safely.")
 
 if __name__ == "__main__":
     main()
