@@ -36,7 +36,7 @@ def test_analyze_logs_empty():
 
 
 def test_analyze_logs_single_entry():
-    """Test behavior with exactly one entry. EPS should be 0.0."""
+    """Test behavior with exactly one entry. EPS should be 1."""
     stream = iter([
         _mock_entry(1157689312.049, "10.105.21.199", 19763)
     ])
@@ -44,29 +44,28 @@ def test_analyze_logs_single_entry():
     
     assert results["mfip"] == "10.105.21.199"
     assert results["lfip"] == "10.105.21.199"
-    assert results["eps"] == 0.0
-    assert results["bytes"] == 19763
+    assert results["eps"] == 1.0
+    assert results["bytes"] == 19763 + 5006  # response size + header size
 
 
 def test_analyze_logs_multiple_entries():
     """Test standard aggregation across multiple entries."""
     stream = iter([
+        _mock_entry(14.0, "10.0.0.1", 300),  # Most freq IP (3 occurrences)
+        _mock_entry(18.0, "10.0.0.1", 100),
         _mock_entry(10.0, "10.0.0.1", 100),
         _mock_entry(12.0, "10.0.0.2", 200),
-        _mock_entry(14.0, "10.0.0.1", 300),  # Most freq IP (2 occurrences)
-        _mock_entry(20.0, "10.0.0.3", 400),  # Least freq IP (tied)
+        _mock_entry(13.0, "10.0.0.2", 200),
+        _mock_entry(20.0, "10.0.0.3", 400),  # Least freq IP (1 occurrence)
     ])
-    
+
     results = analyze_logs(stream)
-    
-    # 4 events across 10 seconds (20.0 - 10.0), EPS = 4 / 10 = 0.4
+
+    # 6 events across 10 seconds (20.0 - 10.0), EPS = 6 / 10 = 0.6
+    assert results["eps"] == 0.6
     assert results["mfip"] == "10.0.0.1"
-    
-    # In python 3.11+ Counter tied items are deterministic (retention order)
-    # The least freq IPs are .2 and .3. most_common()[-1][0] gives the last
-    assert results["lfip"] in ["10.0.0.2", "10.0.0.3"]
-    assert results["eps"] == 4 / (20.0 - 10.0)
-    assert results["bytes"] == 100 + 200 + 300 + 400
+    assert results["lfip"] == "10.0.0.3"
+    assert results["bytes"] == 1300 + 5006 * 6  # Response + headers
 
 
 def test_analyze_logs_out_of_order_timestamps():
@@ -82,5 +81,5 @@ def test_analyze_logs_out_of_order_timestamps():
     
     # min=10.0, max=100.0. Duration = 90.0. Events = 4.
     assert results["eps"] == 4 / 90.0
-    assert results["bytes"] == 4000
+    assert results["bytes"] == 4000 + 5006 * 4  # Response + headers
     assert results["mfip"] == "1.1.1.1"

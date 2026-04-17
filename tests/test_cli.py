@@ -43,5 +43,5 @@ def test_cli_integration(tmp_path, monkeypatch):
     assert results["Most frequent IP"] == "10.105.21.199"
     assert results["Least frequent IP"] == "10.105.21.199"
     assert results["Events per second"] == 2/(1157689320.327 - 1157689312.049)
-    assert results["Total amount of bytes exchanged"] == (19763 + 10182)
+    assert results["Total amount of bytes exchanged"] == 37815
 
