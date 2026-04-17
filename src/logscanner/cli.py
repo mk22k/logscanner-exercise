@@ -34,7 +34,10 @@ OUTPUT_LABELS = {
 
 def main() -> None:
     """Parse command-line arguments, validate inputs, and write results."""
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(levelname)s: %(message)s"
+    )
     
     parser = argparse.ArgumentParser(
         description="Analyze Squid Proxy access logs")
@@ -72,7 +75,9 @@ def main() -> None:
         if file.is_file():
             valid_paths.append(file)
         else:
-            logging.error(f"Input file '{file}' not found. Skipping this file.")
+            logging.error(
+                f"Input file '{file}' not found. Skipping this file."
+            )
             
     if not valid_paths:
         logging.error("No valid input files found to process. Exiting.")

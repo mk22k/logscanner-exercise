@@ -98,7 +98,12 @@ def parse_logs(file_paths: list[Path]) -> Iterator[LogEntry]:
             # Choose the correct open function based on the file extension
             open_func = gzip.open if file_path.suffix == '.gz' else open
             
-            with open_func(file_path, 'rt', encoding='utf-8', errors='replace') as f:
+            with open_func(
+                file_path,
+                'rt',
+                encoding='utf-8',
+                errors='replace'
+            ) as f:
                 for line_number, line in enumerate(f, start=1):
                     if not line.strip():
                         continue    # Skip empty lines
