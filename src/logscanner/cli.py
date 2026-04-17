@@ -9,6 +9,7 @@ command line.
 
 import argparse
 import json
+import logging
 from pathlib import Path
 
 from logscanner.analyzer import analyze_logs
@@ -33,6 +34,8 @@ OUTPUT_LABELS = {
 
 def main() -> None:
     """Parse command-line arguments, validate inputs, and write results."""
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    
     parser = argparse.ArgumentParser(
         description="Analyze Squid Proxy access logs")
 
@@ -69,7 +72,11 @@ def main() -> None:
         if file.is_file():
             valid_paths.append(file)
         else:
-            parser.error(f"Input file '{file}' not found. Skipping this file.")
+            logging.error(f"Input file '{file}' not found. Skipping this file.")
+            
+    if not valid_paths:
+        logging.error("No valid input files found to process. Exiting.")
+        return
     
     # If no option is selected, show all options
     if not any(getattr(args, flag) for flag in CALCULATION_OPTIONS):
@@ -80,9 +87,9 @@ def main() -> None:
     args_dict = vars(args)
     active_flags = [flag for flag in CALCULATION_OPTIONS if args_dict[flag]]
 
-    print(f"Input files: {input_files}")
-    print(f"Output file: {output_file}")
-    print(f"Active calculation options: {active_flags}")
+    logging.info(f"Input files: {input_files}")
+    logging.info(f"Output file: {output_file}")
+    logging.info(f"Active calculation options: {active_flags}")
 
     log_stream = parse_logs(valid_paths)
     metrics = analyze_logs(log_stream)
@@ -96,10 +103,12 @@ def main() -> None:
     try:
         with open(output_file, 'w', encoding='utf-8') as output_file_handle:
             json.dump(final_output, output_file_handle, indent=4)
-        print(f"Results successfully written to {output_file}")
+        logging.info(f"Results successfully written to {output_file}")
 
     except Exception as e:
-        print(f"Error writing the output file: {e}")
+        logging.error(f"Error writing the output file: {e}")
+        logging.info("Dumping results to console as a fallback:")
+        print(json.dumps(final_output, indent=4))
 
 if __name__ == "__main__":
     main()
