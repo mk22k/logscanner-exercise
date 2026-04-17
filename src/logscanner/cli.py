@@ -56,7 +56,9 @@ def main() -> None:
     args = parser.parse_args()
 
     if len(args.files) < 2:
-        parser.error("You must provide at least one input file and one output file.")
+        parser.error(
+            "You must provide at least one input file and one output file."
+        )
 
     input_files = args.files[:-1]
     output_file = args.files[-1]
