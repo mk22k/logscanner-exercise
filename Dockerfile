@@ -5,6 +5,8 @@ FROM python:${PYTHON_VERSION}-slim as base
 # Create a non-root user and group
 RUN groupadd -r logscanner && useradd -r -g logscanner logscanner
 
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
 # Copy dependency files and project configuration
