@@ -15,6 +15,18 @@ dev:
 test:
 	pytest
 
+# Run only CLI tests
+test_cli:
+	pytest tests/test_cli.py
+
+# Run only parser tests
+test_parser:
+	pytest tests/test_parser.py
+
+# Run only analyzer tests
+test_analyzer:
+	pytest tests/test_analyzer.py
+
 # Run linters and security checks
 lint:
 	ruff check .
