@@ -38,19 +38,10 @@ def main() -> None:
 
     # Core I/O arguments
     parser.add_argument(
-        "--input",
-        '-i',
+        "files",
         nargs='+',
         type=Path,
-        required=True,
-        help="Path(s) to the log file(s) to be analyzed"
-    )
-    parser.add_argument(
-        "--output",
-        '-o',
-        type=Path,
-        required=True,
-        help="Path to the file where results will be saved"
+        help="Input log file(s) followed by the output file path"
     )
 
     # Register calculation options
@@ -64,9 +55,15 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    if len(args.files) < 2:
+        parser.error("You must provide at least one input file and one output file.")
+
+    input_files = args.files[:-1]
+    output_file = args.files[-1]
+
     # Input file validation. Do not fail if one file is missing
-    valid_paths = []
-    for file in args.input:
+    valid_paths: list[Path] = []
+    for file in input_files:
         if file.is_file():
             valid_paths.append(file)
         else:
@@ -81,8 +78,8 @@ def main() -> None:
     args_dict = vars(args)
     active_flags = [flag for flag in CALCULATION_OPTIONS if args_dict[flag]]
 
-    print(f"Input files: {args.input}")
-    print(f"Output file: {args.output}")
+    print(f"Input files: {input_files}")
+    print(f"Output file: {output_file}")
     print(f"Active calculation options: {active_flags}")
 
     log_stream = parse_logs(valid_paths)
@@ -95,9 +92,9 @@ def main() -> None:
     }
 
     try:
-        with open(args.output, 'w', encoding='utf-8') as output_file:
-            json.dump(final_output, output_file, indent=4)
-        print(f"Results successfully written to {args.output}")
+        with open(output_file, 'w', encoding='utf-8') as output_file_handle:
+            json.dump(final_output, output_file_handle, indent=4)
+        print(f"Results successfully written to {output_file}")
 
     except Exception as e:
         print(f"Error writing the output file: {e}")
