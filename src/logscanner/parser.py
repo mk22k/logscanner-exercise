@@ -110,7 +110,6 @@ def parse_logs(file_paths: list[Path]) -> Iterator[LogEntry]:
 
                     try:
                         entry = parse_line(line)
-                        #if entry is not None:
                         yield entry
                     except ValueError as e:
                         logger.warning(
@@ -126,10 +125,10 @@ def parse_logs(file_paths: list[Path]) -> Iterator[LogEntry]:
                         continue
 
         except OSError as e:
-            logger.error(f"Failed to read file {file_path}: {e}")
+            logger.error(f"Failed to read/decompress file {file_path}: {e}")
             continue
         except Exception as e:
             logger.error(
-                f"Unexpected error while handling file {file_path}: {e}"
+                f"Unexpected critical error while handling file {file_path}: {e}"
             )
             continue
