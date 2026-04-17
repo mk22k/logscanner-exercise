@@ -5,6 +5,7 @@ Contains structures and functions for mapping raw string lines
 to strongly typed `LogEntry` objects.
 """
 
+import gzip
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -90,21 +91,22 @@ def parse_line(line: str) -> LogEntry:
 def parse_logs(file_paths: list[Path]) -> Iterator[LogEntry]:
     """Read log files line by line, yielding parsed LogEntry objects.
 
-    For now, it only handles plain text files.
+    Automatically handles plain text and gzip compressed files (.gz).
     """
     for file_path in file_paths:
         try:
-            with (
-                open(file_path, 'rt', encoding='utf-8', errors='replace') as f
-            ):
+            # Choose the correct open function based on the file extension
+            open_func = gzip.open if file_path.suffix == '.gz' else open
+            
+            with open_func(file_path, 'rt', encoding='utf-8', errors='replace') as f:
                 for line_number, line in enumerate(f, start=1):
                     if not line.strip():
                         continue    # Skip empty lines
 
                     try:
                         entry = parse_line(line)
-                        if entry is not None:
-                            yield entry
+                        #if entry is not None:
+                        yield entry
                     except ValueError as e:
                         logger.warning(
                             f"File {file_path}, Line {line_number}: {e}. "
