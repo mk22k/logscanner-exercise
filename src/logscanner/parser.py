@@ -129,6 +129,7 @@ def parse_logs(file_paths: list[Path]) -> Iterator[LogEntry]:
             continue
         except Exception as e:
             logger.error(
-                f"Unexpected critical error while handling file {file_path}: {e}"
+                f"Unexpected critical error while handling file "
+                f"{file_path}: {e}"
             )
             continue
