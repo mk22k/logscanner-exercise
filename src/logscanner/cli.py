@@ -12,6 +12,8 @@ import json
 import logging
 from pathlib import Path
 
+import humanize
+
 from logscanner.analyzer import analyze_logs
 from logscanner.parser import parse_logs
 
@@ -30,7 +32,6 @@ OUTPUT_LABELS = {
     "eps": "Events per second",
     "bytes": "Total amount of bytes exchanged"
 }
-
 
 def main() -> None:
     """Parse command-line arguments, validate inputs, and write results."""
@@ -102,9 +103,17 @@ def main() -> None:
 
         # Build the final dictionary using the descriptive keys
         final_output = {
-            OUTPUT_LABELS[flag]: metrics[flag] 
+            OUTPUT_LABELS[flag]: metrics[flag]
             for flag in active_flags
         }
+
+        if "bytes" in active_flags and metrics["bytes"] is not None:
+            human_readable = humanize.naturalsize(
+                metrics["bytes"], binary=False
+            )
+            final_output[OUTPUT_LABELS["bytes"]] = (
+                f"{metrics['bytes']} ({human_readable})"
+            )
 
         try:
             with open(
