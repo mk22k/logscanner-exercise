@@ -74,5 +74,8 @@ make check
 ```
 
 Individual commands:
-- `make test` - Run the test suite using pytest.
 - `make lint` - Run ruff and bandit checks.
+- `make test` - Run the test suite using pytest.
+- `make test_cli` - Run tests specifically for the CLI interface.
+- `make test_parser` - Run tests specifically for the log parser.
+- `make test_analyzer` - Run tests specifically for the metrics calculations.
