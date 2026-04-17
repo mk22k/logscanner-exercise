@@ -1,7 +1,7 @@
-.PHONY: install dev test lint build-docker
+.PHONY: check install dev test lint build-docker
 
 # Run all checks (linting, security, and tests)
-all: lint test
+check: lint test
 
 # Install the application for normal usage
 install:
