@@ -107,7 +107,11 @@ def main() -> None:
         }
 
         try:
-            with open(output_file, 'w', encoding='utf-8') as output_file_handle:
+            with open(
+                output_file,
+                'w',
+                encoding='utf-8'
+            ) as output_file_handle:
                 json.dump(final_output, output_file_handle, indent=4)
             logging.info(f"Results successfully written to {output_file}")
 
@@ -117,7 +121,9 @@ def main() -> None:
             print(json.dumps(final_output, indent=4))
             
     except Exception as e:
-        logging.critical(f"An unexpected critical error occurred during processing: {e}")
+        logging.critical(
+            f"An unexpected critical error occurred during processing: {e}"
+        )
         logging.info("Exiting application safely.")
 
 if __name__ == "__main__":
