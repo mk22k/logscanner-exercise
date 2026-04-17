@@ -1,4 +1,4 @@
-.PHONY: check install dev test lint build-docker
+.PHONY: check install dev test lint build-docker clean clean-docker
 
 # Run all checks (linting, security, and tests)
 check: lint test
@@ -40,3 +40,12 @@ build-docker:
 # Usage: make run-docker ARGS="/data/access.log /data/results.json"
 run-docker:
 	docker run --rm -u $$(id -u):$$(id -g) -v "$$(pwd):/data" logscanner-app $(ARGS)
+# Remove Python cache directories and build artifacts
+clean:
+	rm -rf .pytest_cache .ruff_cache .coverage htmlcov
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name "*.egg-info" -exec rm -rf {} +
+
+# Remove the built Docker image
+clean-docker:
+	docker rmi logscanner-app || true
