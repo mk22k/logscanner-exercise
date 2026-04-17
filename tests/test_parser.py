@@ -80,3 +80,27 @@ def test_parse_logs_handles_missing_file(tmp_path: Path, caplog):
     # Should yield nothing but not crash
     assert len(entries_list) == 0
     assert "Failed to read file" in caplog.text
+
+
+def test_parse_logs_gzip(tmp_path: Path):
+    """Test that parse_logs can read from gzip compressed files natively."""
+    import gzip
+    
+    log_file = tmp_path / "compressed.log.gz"
+    
+    # Write sample content to a gzip file
+    log_content = (
+        f"{VALID_LOG_LINE}\n"
+        f"{VALID_LOG_LINE}\n"
+    )
+    
+    with gzip.open(log_file, "wt", encoding="utf-8") as f:
+        f.write(log_content)
+        
+    entries_generator = parse_logs([log_file])
+    entries_list = list(entries_generator)
+    
+    # Should correctly extract and parse both valid lines
+    assert len(entries_list) == 2
+    assert all(isinstance(entry, LogEntry) for entry in entries_list)
+    assert entries_list[0].timestamp == 1157689312.049
