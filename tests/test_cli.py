@@ -15,8 +15,8 @@ def test_cli_integration(tmp_path, monkeypatch):
     log_file.write_text(log_content)
     
     test_args = [
-        "--input", str(log_file),
-        "--output", str(output_file),
+        str(log_file),
+        str(output_file),
         "--mfip",
         "--lfip",
         "--eps",
