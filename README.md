@@ -1,8 +1,6 @@
 # Log Scanner
 
-`logscanner` is a command-line tool to analyze the content of Squid Proxy access log files.
-
-This application parses proxy logs and calculates various metrics, outputting the results to a JSON file.
+`logscanner` is a command-line tool designed to analyze the content of Squid Proxy access log files and output the results as plain-text JSON.
 
 ## Features
 
@@ -13,7 +11,38 @@ It calculates the following metrics from Squid Proxy access logs:
 - **Events per second** (`--eps`)
 - **Total amount of bytes exchanged** (`--bytes`)
 
+Assumptions:
+- The "most frequent IP" is the IP address that appears most frequently in the logs as the client IP (Field 3).
+- The "least frequent IP" is the IP address that appears least frequently in the logs as the client IP (Field 3).
+
+If multiple IP addresses have the same highest/lowest frequency, one of them will be returned.
+- "Events per second" is calculated by dividing the total number of log entries by the time difference between the earliest and latest timestamps in the logs (Fields 1). If the time difference is zero (i.e., all events have the same timestamp), the EPS will be equal to the total number of events.
+- "Total amount of bytes exchanged" is calculated by summing the response header size (Field 2) and response size (Field 5) for all log entries.
+
 If no specific flag is provided, all metrics are calculated by default.
+
+## Sample Data & Format
+
+The application expects logs in the standard Squid Proxy access log format (10 fields total). 
+**Sample data:** [SecRepo Squid Proxy Access Logs](https://www.secrepo.com/squid/access.log.gz)
+
+**Expected fields:**
+1. Timestamp (seconds since epoch)
+2. Response header size (bytes)
+3. Client IP address
+4. HTTP response code
+5. Response size (bytes)
+6. HTTP request method
+7. URL
+8. Username
+9. Type of access/destination IP address
+10. Response type
+
+## Assumptions & Design Decisions
+
+- **Fault Tolerance:** If one input file in a list of files is missing or unreadable, the tool will skip it with a warning rather than crashing completely. Malformed lines in the logs are logged and skipped.
+- **Extensibility:** The tool separates the parser, analyzer logic, and CLI into independent modules. This makes it trivial to extend the tool to handle different input log formats or output serializers (e.g., CSV, XML) in the future.
+- **Bytes Exchanged:** The "total amount of bytes exchanged" metric is calculated by summing the **Response header size** (Field 2) and **Response size** (Field 5).
 
 ## Installation
 
