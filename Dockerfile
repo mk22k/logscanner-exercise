@@ -1,6 +1,6 @@
 # Define the base image
 ARG PYTHON_VERSION=3.11
-FROM python:${PYTHON_VERSION}-slim as base
+FROM python:${PYTHON_VERSION}-slim AS base
 
 # Create a non-root user and group
 RUN groupadd -r logscanner && useradd -r -g logscanner logscanner
