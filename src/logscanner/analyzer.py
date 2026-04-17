@@ -18,7 +18,7 @@ def analyze_logs(
         entries: Iterator[LogEntry]
     ) -> dict[str, str | int | float | None]:
     """Analyze a stream of LogEntry objects to compute required statistics."""
-    ip_counter = Counter()
+    ip_counter: Counter[str] = Counter()
     min_timestamp = float('inf')
     max_timestamp = float('-inf')
     total_bytes = 0
@@ -27,7 +27,7 @@ def analyze_logs(
 
     for entry in entries:
         ip_counter[entry.client_ip] += 1
-        total_bytes += entry.response_size
+        total_bytes += entry.response_size + entry.header_size
         total_events += 1
         if entry.timestamp < min_timestamp:
             min_timestamp = entry.timestamp
