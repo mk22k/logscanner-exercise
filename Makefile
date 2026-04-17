@@ -11,9 +11,9 @@ install:
 dev:
 	pip install ".[dev]"
 
-# Run tests
+# Run tests with coverage reporting
 test:
-	pytest
+	pytest --cov=src/logscanner --cov-report=term-missing
 
 # Run only CLI tests
 test_cli:
