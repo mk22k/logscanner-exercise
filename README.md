@@ -90,7 +90,7 @@ logscanner access1.log access2.log access3.log results.json --bytes
 **Run via Docker:**
 ```bash
 # Assuming log files are in the current directory, which gets mounted to /data
-make run-docker ARGS="/data/access.log /data/results.json"
+make run-docker ARGS="/data/access.log.gz /data/results.json"
 ```
 
 ## Development
