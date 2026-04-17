@@ -79,7 +79,7 @@ def test_parse_logs_handles_missing_file(tmp_path: Path, caplog):
     
     # Should yield nothing but not crash
     assert len(entries_list) == 0
-    assert "Failed to read file" in caplog.text
+    assert "Failed to read/decompress file" in caplog.text
 
 
 def test_parse_logs_gzip(tmp_path: Path):
